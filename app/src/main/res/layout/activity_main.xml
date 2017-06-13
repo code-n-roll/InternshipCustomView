@@ -8,8 +8,8 @@
 
     <partner.its.com.customview1.DiagramView
         android:id="@+id/diagram_view"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:percentageColor="@android:color/white"/>
 
     <SeekBar
