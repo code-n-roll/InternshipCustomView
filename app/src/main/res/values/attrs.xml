@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="DiagramView">
+        <attr name="backgroundColor" format="color"/>
+        <attr name="foregroundColor" format="color"/>
+        <attr name="percentageColor" format="color"/>
+        <attr name="percentageCount" format="integer"/>
+        <attr name="percentageSize" format="dimension"/>
+    </declare-styleable>
+</resources>
