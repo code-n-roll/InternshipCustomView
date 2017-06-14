@@ -3,9 +3,10 @@ package partner.its.com.customview1;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -56,11 +57,16 @@ public class MainActivity extends AppCompatActivity {
         };
         seekBarSize.setOnSeekBarChangeListener(seekBarSizeChangeListener);
 
+        final Random randomColor = new Random();
+
+
         SeekBar seekBarBackground = (SeekBar) findViewById(R.id.seekBarBackgroundColor);
         SeekBar.OnSeekBarChangeListener seekBarBackgroundChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                diagramView.setBackgroundColor(Color.rgb(progress, progress, progress));
+                diagramView.setBackgroundColor(Color.rgb(randomColor.nextInt(progress),
+                        randomColor.nextInt(progress),
+                        randomColor.nextInt(progress)));
             }
 
             @Override
@@ -76,5 +82,26 @@ public class MainActivity extends AppCompatActivity {
         seekBarBackground.setOnSeekBarChangeListener(seekBarBackgroundChangeListener);
 
 
+
+        SeekBar seekBarForeground = (SeekBar) findViewById(R.id.seekBarForegroundColor);
+        SeekBar.OnSeekBarChangeListener seekBarForegroundChangeListener = new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                diagramView.setForegroundColor(Color.rgb(randomColor.nextInt(progress),
+                        randomColor.nextInt(progress),
+                        randomColor.nextInt(progress)));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        };
+        seekBarForeground.setOnSeekBarChangeListener(seekBarForegroundChangeListener);
     }
 }

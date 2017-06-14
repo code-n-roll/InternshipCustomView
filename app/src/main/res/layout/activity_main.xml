@@ -10,7 +10,11 @@
         android:id="@+id/diagram_view"
         android:layout_width="300dp"
         android:layout_height="300dp"
-        app:percentageColor="@android:color/white"/>
+        app:percentageColor="@android:color/white"
+        app:beyondBackgroundColor="@android:color/holo_red_light"
+        app:beyondForegroundColor="@android:color/holo_red_dark"
+        app:percentageMaxCount="200"
+        app:percentageLimitCount="100"/>
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -26,7 +30,7 @@
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_gravity="end"
-            android:max="100"
+            android:max="200"
             android:progress="1" />
     </FrameLayout>
 
@@ -58,7 +62,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="bg diagram"
+            android:text="bg color"
             android:layout_gravity="start|center_vertical"
             android:layout_centerVertical="true"/>
         <SeekBar
@@ -78,7 +82,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="fg diagram"
+            android:text="fg color"
             android:layout_gravity="start|center_vertical"
             android:layout_centerVertical="true"/>
         <SeekBar
@@ -86,7 +90,7 @@
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_gravity="end"
-            android:max="1080"
+            android:max="255"
             android:progress="5"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"/>

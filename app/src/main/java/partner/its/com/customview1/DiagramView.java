@@ -18,17 +18,22 @@ import android.view.View;
 
 public class DiagramView extends View {
     private Paint mBackgroundPaint;
-    private Paint mDynamicForegroundPaint;
+    private Paint mForegroundPaint;
     private Paint mPercentagePaint;
 
     private int mBackgroundColor;
-    private int mDynamicForegroundColor;
+    private int mForegroundColor;
     private int mPercentageColor;
+    private int mBeyondBackgroundColor;
+    private int mBeyondForegroundColor;
 
     private float mCenterX;
     private float mCenterY;
     private float mRadius;
     private int mPercentageCount;
+    private int mPercentageOutOfLimitCount;
+    private int mPercentageMaxCount;
+    private int mPercentageLimitCount;
     private int mPercentageCountInDegrees;
     private int mPercentageSize = 0;
 
@@ -70,10 +75,10 @@ public class DiagramView extends View {
     protected void onDraw(Canvas canvas) {
         initDiagram();
         initPercentageSizeToDefault();
-        mDynamicForegroundPaint.setStrokeWidth(mCenterX);
+        mForegroundPaint.setStrokeWidth(mCenterX);
 
         canvas.drawCircle(mCenterX, mCenterY, mRadius, mBackgroundPaint);
-        canvas.drawArc(mDiagram, 270, mPercentageCountInDegrees, false, mDynamicForegroundPaint);
+        canvas.drawArc(mDiagram, 270, mPercentageCountInDegrees, false, mForegroundPaint);
         canvas.drawText(String.valueOf(mPercentageCount)+"%", mCenterX, mCenterY, mPercentagePaint);
     }
 
@@ -97,13 +102,19 @@ public class DiagramView extends View {
         try {
             mBackgroundColor = typedArray.getColor(R.styleable.DiagramView_backgroundColor,
                     ContextCompat.getColor(context, android.R.color.holo_green_light));
-            mDynamicForegroundColor = typedArray.getColor(R.styleable.DiagramView_foregroundColor,
+            mForegroundColor = typedArray.getColor(R.styleable.DiagramView_foregroundColor,
                     ContextCompat.getColor(context, android.R.color.holo_green_dark));
             mPercentageColor = typedArray.getColor(R.styleable.DiagramView_percentageColor,
                     ContextCompat.getColor(context, android.R.color.black));
+            mBeyondBackgroundColor = typedArray.getColor(R.styleable.DiagramView_beyondBackgroundColor,
+                    ContextCompat.getColor(context, android.R.color.holo_red_light));
+            mBeyondForegroundColor = typedArray.getColor(R.styleable.DiagramView_beyondForegroundColor,
+                    ContextCompat.getColor(context, android.R.color.holo_red_dark));
 
+            mPercentageMaxCount = typedArray.getInt(R.styleable.DiagramView_percentageMaxCount, 100);
             mPercentageCount= typedArray.getInt(R.styleable.DiagramView_percentageCount,51);
-            updatePercentageCountInDegrees();
+            mPercentageLimitCount = typedArray.getInt(R.styleable.DiagramView_percentageLimitCount, 100);
+            updatePercentageCountInDegrees(mPercentageCount);
 
             if (typedArray.hasValue(R.styleable.DiagramView_percentageSize)) {
                 mPercentageSize = typedArray.getDimensionPixelSize(
@@ -130,8 +141,8 @@ public class DiagramView extends View {
         mPercentagePaint.setTextSize(textSize);
     }
 
-    private void updatePercentageCountInDegrees(){
-        mPercentageCountInDegrees = (int) (mPercentageCount * 3.6f);
+    private void updatePercentageCountInDegrees(int percentageCountCurrent){
+        mPercentageCountInDegrees = (int)(percentageCountCurrent * (360f/mPercentageLimitCount));
     }
 
     private void initPaints(){
@@ -140,10 +151,10 @@ public class DiagramView extends View {
         mBackgroundPaint.setStyle(Paint.Style.FILL);
         mBackgroundPaint.setColor(mBackgroundColor);
 
-        mDynamicForegroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        mDynamicForegroundPaint.setStyle(Paint.Style.STROKE);
-        mDynamicForegroundPaint.setStrokeCap(Paint.Cap.BUTT);
-        mDynamicForegroundPaint.setColor(mDynamicForegroundColor);
+        mForegroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        mForegroundPaint.setStyle(Paint.Style.STROKE);
+        mForegroundPaint.setStrokeCap(Paint.Cap.BUTT);
+        mForegroundPaint.setColor(mForegroundColor);
 
         mPercentagePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPercentagePaint.setStyle(Paint.Style.STROKE);
@@ -154,8 +165,25 @@ public class DiagramView extends View {
 
     public void setPercentageCount(int percentageCount){
         mPercentageCount = percentageCount;
-        updatePercentageCountInDegrees();
+        if (mPercentageCount > mPercentageLimitCount){
+            updateBackgroundColorPaint(mBeyondBackgroundColor);
+            updateForegroundColorPaint(mBeyondForegroundColor);
+            mPercentageOutOfLimitCount = mPercentageCount - mPercentageLimitCount ;
+            updatePercentageCountInDegrees(mPercentageOutOfLimitCount);
+        } else if (mPercentageCount >= 0 && mPercentageCount <= mPercentageLimitCount){
+            updateBackgroundColorPaint(mBackgroundColor);
+            updateForegroundColorPaint(mForegroundColor);
+            updatePercentageCountInDegrees(mPercentageCount);
+        }
         invalidate();
+    }
+
+    public void updateBackgroundColorPaint(int color){
+        mBackgroundPaint.setColor(color);
+    }
+
+    public void updateForegroundColorPaint(int color){
+        mForegroundPaint.setColor(color);
     }
 
     public int getPercentageCount(){
@@ -165,6 +193,12 @@ public class DiagramView extends View {
     public void setBackgroundColor(int color){
         mBackgroundColor = color;
         mBackgroundPaint.setColor(mBackgroundColor);
+        invalidate();
+    }
+
+    public void setForegroundColor(int color){
+        mForegroundColor = color;
+        mForegroundPaint.setColor(mForegroundColor);
         invalidate();
     }
 }
