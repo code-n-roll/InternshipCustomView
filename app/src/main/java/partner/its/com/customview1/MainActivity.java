@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         seekBarSize.setOnSeekBarChangeListener(seekBarSizeChangeListener);
+        seekBarSize.setProgress(diagramView.getLayoutParams().width);
 
         final Random randomColor = new Random();
 

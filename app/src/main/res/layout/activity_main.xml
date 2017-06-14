@@ -30,7 +30,7 @@
             android:layout_width="300dp"
             android:layout_height="50dp"
             android:layout_gravity="end"
-            android:max="200"
+            android:max="250"
             android:progress="1" />
     </FrameLayout>
 
@@ -71,7 +71,7 @@
             android:layout_height="50dp"
             android:layout_gravity="end"
             android:max="255"
-            android:progress="0"
+            android:progress="10"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"/>
     </RelativeLayout>
@@ -91,7 +91,7 @@
             android:layout_height="50dp"
             android:layout_gravity="end"
             android:max="255"
-            android:progress="5"
+            android:progress="10"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"/>
     </RelativeLayout>
