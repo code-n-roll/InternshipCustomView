@@ -10,11 +10,9 @@
         android:id="@+id/diagram_view"
         android:layout_width="300dp"
         android:layout_height="300dp"
-        app:percentageColor="@android:color/white"
-        app:beyondBackgroundColor="@android:color/holo_red_light"
-        app:beyondForegroundColor="@android:color/holo_red_dark"
-        app:percentageMaxCount="200"
-        app:percentageLimitCount="100"/>
+        app:percentageTextColor="@android:color/white"
+        app:warningBackgroundColor="@android:color/holo_red_light"
+        app:warningForegroundColor="@android:color/holo_red_dark" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -71,7 +69,7 @@
             android:layout_height="50dp"
             android:layout_gravity="end"
             android:max="255"
-            android:progress="10"
+            android:progress="50"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"/>
     </RelativeLayout>
@@ -91,7 +89,7 @@
             android:layout_height="50dp"
             android:layout_gravity="end"
             android:max="255"
-            android:progress="10"
+            android:progress="50"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"/>
     </RelativeLayout>

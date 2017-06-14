@@ -10,15 +10,18 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 /**
  * Created by roman on 13.6.17.
  */
 
 public class DiagramView extends View {
+    private final static int PERCENTAGE_MAX_VALUE = 200;
+    private final static int PERCENTAGE_BOUND_VALUE = 100;
+    private final static float DEGREES_360 = 360f;
+    private final static int DEGREES_270_IS_12_HOURS_CLOCK = 270;
+
     private Paint mBackgroundPaint;
     private Paint mForegroundPaint;
     private Paint mPercentagePaint;
@@ -26,40 +29,37 @@ public class DiagramView extends View {
     private int mBackgroundColor;
     private int mForegroundColor;
     private int mPercentageColor;
-    private int mBeyondBackgroundColor;
-    private int mBeyondForegroundColor;
+    private int mWarningBackgroundColor;
+    private int mWarningForegroundColor;
 
     private float mCenterX;
     private float mCenterY;
     private float mRadius;
 
     private int mPercentageCount;
-    private int mPercentageMaxCount;
-    private int mPercentageLimitCount;
     private int mPercentageCountInDegrees;
     private int mPercentageSize = 0;
+
     private boolean mHasPercentageSize;
 
     private RectF mDiagram;
-    private TextView mPercentageView;
-
 
     public DiagramView(Context context) {
         super(context);
         initAttrs(context, null);
-        initPaints(context);
+        initPaints();
     }
 
     public DiagramView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         initAttrs(context, attrs);
-        initPaints(context);
+        initPaints();
     }
 
     public DiagramView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initAttrs(context, attrs);
-        initPaints(context);
+        initPaints();
     }
 
 
@@ -78,32 +78,22 @@ public class DiagramView extends View {
         mCenterX = w / 2f;
         mCenterY = h / 2f;
         mRadius = Math.min(w, h) / 2f;
-//        mPercentageView.layout(0, 0, w, h);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
-//        initTextView();
         initDiagram();
         initPercentageSizeToDefault();
         mForegroundPaint.setStrokeWidth(mCenterX);
 
         canvas.drawCircle(mCenterX, mCenterY, mRadius, mBackgroundPaint);
-        canvas.drawArc(mDiagram, 270, mPercentageCountInDegrees, false, mForegroundPaint);
-        int yPos = (int)((canvas.getHeight() / 2) - ((mPercentagePaint.descent() + mPercentagePaint.ascent())/2));
-        canvas.drawText(getStringPercentage(), mCenterX, yPos, mPercentagePaint);
-//        mPercentageView.draw(canvas);
+        canvas.drawArc(mDiagram, DEGREES_270_IS_12_HOURS_CLOCK, mPercentageCountInDegrees, false, mForegroundPaint);
+        canvas.drawText(getStringPercentage(), mCenterX, getYPosPercentageText(canvas), mPercentagePaint);
     }
 
-    private void initTextView(){
-        mPercentageView.setBackgroundColor(ContextCompat.getColor(this.getContext(), android.R.color.transparent));
-        mPercentageView.setTextColor(mPercentageColor);
-        mPercentageView.setTextSize(mPercentageSize/2);
-        mPercentageView.setText(String.valueOf(mPercentageCount).concat("%"));
-
-        Log.d("MyLogs", "width= "+ getWidth()+", height = " + getHeight());
+    private int getYPosPercentageText(Canvas canvas){
+        return (int)((canvas.getHeight() / 2) - ((mPercentagePaint.descent() + mPercentagePaint.ascent())/2));
     }
-
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -112,38 +102,30 @@ public class DiagramView extends View {
 
         int size = Math.min(w, h);
         setMeasuredDimension(size, size);
-
-        mPercentageView.measure(View.MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY),
-                                View.MeasureSpec.makeMeasureSpec(size, MeasureSpec.EXACTLY));
     }
 
     private void initAttrs(Context context, AttributeSet attrs){
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(
-                attrs,
-                R.styleable.DiagramView,
-                0,0
-        );
+                attrs, R.styleable.DiagramView, 0, 0);
 
         try {
             mBackgroundColor = typedArray.getColor(R.styleable.DiagramView_backgroundColor,
                     ContextCompat.getColor(context, android.R.color.holo_green_light));
             mForegroundColor = typedArray.getColor(R.styleable.DiagramView_foregroundColor,
                     ContextCompat.getColor(context, android.R.color.holo_green_dark));
-            mPercentageColor = typedArray.getColor(R.styleable.DiagramView_percentageColor,
+            mPercentageColor = typedArray.getColor(R.styleable.DiagramView_percentageTextColor,
                     ContextCompat.getColor(context, android.R.color.black));
-            mBeyondBackgroundColor = typedArray.getColor(R.styleable.DiagramView_beyondBackgroundColor,
+            mWarningBackgroundColor = typedArray.getColor(R.styleable.DiagramView_warningBackgroundColor,
                     ContextCompat.getColor(context, android.R.color.holo_red_light));
-            mBeyondForegroundColor = typedArray.getColor(R.styleable.DiagramView_beyondForegroundColor,
+            mWarningForegroundColor = typedArray.getColor(R.styleable.DiagramView_warningForegroundColor,
                     ContextCompat.getColor(context, android.R.color.holo_red_dark));
 
-            mPercentageMaxCount = typedArray.getInt(R.styleable.DiagramView_percentageMaxCount, 100);
-            mPercentageCount= typedArray.getInt(R.styleable.DiagramView_percentageCount,51);
-            mPercentageLimitCount = typedArray.getInt(R.styleable.DiagramView_percentageLimitCount, 100);
+            mPercentageCount= typedArray.getInt(R.styleable.DiagramView_percentageValue,51);
             updatePercentageCountInDegrees(mPercentageCount);
 
-            if (typedArray.hasValue(R.styleable.DiagramView_percentageSize)) {
+            if (typedArray.hasValue(R.styleable.DiagramView_percentageTextSize)) {
                 mPercentageSize = typedArray.getDimensionPixelSize(
-                        R.styleable.DiagramView_percentageSize, 0);
+                        R.styleable.DiagramView_percentageTextSize, 0);
                 mHasPercentageSize = true;
             } else {
                 mHasPercentageSize = false;
@@ -169,12 +151,10 @@ public class DiagramView extends View {
     }
 
     private void updatePercentageCountInDegrees(int percentageCountCurrent){
-        mPercentageCountInDegrees = (int)(percentageCountCurrent * (360f/mPercentageLimitCount));
+        mPercentageCountInDegrees = (int)(percentageCountCurrent * (DEGREES_360/PERCENTAGE_BOUND_VALUE));
     }
 
-    private void initPaints(Context context){
-        mPercentageView = new TextView(context);
-
+    private void initPaints(){
         mDiagram = new RectF();
         mBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mBackgroundPaint.setStyle(Paint.Style.FILL);
@@ -196,24 +176,21 @@ public class DiagramView extends View {
     }
 
     public void setPercentageCount(int percentageCount){
-//            if (percentageCount >= 0 && percentageCount <= mPercentageMaxCount) {
         mPercentageCount = percentageCount;
 
-        if (mPercentageCount > mPercentageLimitCount && mPercentageCount <= mPercentageMaxCount) {
-            updateBackgroundColorPaint(mBeyondBackgroundColor);
-            updateForegroundColorPaint(mBeyondForegroundColor);
-            int percentageOutOfLimitCount = (mPercentageCount - mPercentageLimitCount)%mPercentageMaxCount;
+        if (mPercentageCount > PERCENTAGE_BOUND_VALUE && mPercentageCount <= PERCENTAGE_MAX_VALUE) {
+            updateBackgroundColorPaint(mWarningBackgroundColor);
+            updateForegroundColorPaint(mWarningForegroundColor);
+            int percentageOutOfLimitCount = (mPercentageCount - PERCENTAGE_BOUND_VALUE)% PERCENTAGE_MAX_VALUE;
             updatePercentageCountInDegrees(percentageOutOfLimitCount);
-        } else if (mPercentageCount >= 0 && mPercentageCount <= mPercentageLimitCount) {
+        } else if (mPercentageCount >= 0 && mPercentageCount <= PERCENTAGE_BOUND_VALUE) {
             updateBackgroundColorPaint(mBackgroundColor);
             updateForegroundColorPaint(mForegroundColor);
             updatePercentageCountInDegrees(mPercentageCount);
         } else {
-            updatePercentageCountInDegrees(mPercentageMaxCount);
+            updatePercentageCountInDegrees(PERCENTAGE_MAX_VALUE);
         }
         invalidate();
-//            }
-//        }
     }
 
     public void updateBackgroundColorPaint(int color){

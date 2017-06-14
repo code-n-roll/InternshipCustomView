@@ -3,12 +3,10 @@
     <declare-styleable name="DiagramView">
         <attr name="backgroundColor" format="color"/>
         <attr name="foregroundColor" format="color"/>
-        <attr name="beyondBackgroundColor" format="color"/>
-        <attr name="beyondForegroundColor" format="color"/>
-        <attr name="percentageColor" format="color"/>
-        <attr name="percentageCount" format="integer"/>
-        <attr name="percentageMaxCount" format="integer"/>
-        <attr name="percentageLimitCount" format="integer"/>
-        <attr name="percentageSize" format="dimension"/>
+        <attr name="warningBackgroundColor" format="color"/>
+        <attr name="warningForegroundColor" format="color"/>
+        <attr name="percentageTextColor" format="color"/>
+        <attr name="percentageValue" format="integer"/>
+        <attr name="percentageTextSize" format="dimension"/>
     </declare-styleable>
 </resources>
