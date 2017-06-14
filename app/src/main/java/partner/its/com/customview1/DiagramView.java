@@ -161,4 +161,10 @@ public class DiagramView extends View {
     public int getPercentageCount(){
         return mPercentageCount;
     }
+
+    public void setBackgroundColor(int color){
+        mBackgroundColor = color;
+        mBackgroundPaint.setColor(mBackgroundColor);
+        invalidate();
+    }
 }
