@@ -17,15 +17,19 @@ import android.view.View;
  */
 
 public class CaloriesFromOccasionsDiagramView extends View {
-    private final static int DEGREES_270_IS_12_HOURS_CLOCK = 270;
-    private final static int DEGREES_360 = 360;
-    private final static int ONE_CIRCLE_IN_PERCENT = 100;
+    private final static float DEGREES_270_IS_12_HOURS_CLOCK = 270f;
+    private final static float DEGREES_360 = 360f;
+    private final static float ONE_CIRCLE_IN_PERCENT_DECIMAL = 1f;
+    private final static int BREAKFAST_DEGREES_ID = 0;
+    private final static int LUNCH_DEGREES_ID = 1;
+    private final static int DINNER_DEGREES_ID = 2;
+    private final static int DRINKS_DEGREES_ID = 3;
+    private final static int DEFAULT_THICKNESS_STATE = -1;
 
     private Paint mBreakfastDiagramPaint;
     private Paint mLunchDiagramPaint;
     private Paint mDinnerDiagramPaint;
     private Paint mDrinksDiagramPaint;
-
 
     private int mBreakfastColor;
     private int mLunchColor;
@@ -36,10 +40,10 @@ public class CaloriesFromOccasionsDiagramView extends View {
     private float mCenterY;
     private float mRadius;
 
-    private int mBreakfastPercent;
-    private int mLunchPercent;
-    private int mDinnerPercent;
-    private int mDrinksPercent;
+    private float mBreakfastPercent;
+    private float mLunchPercent;
+    private float mDinnerPercent;
+    private float mDrinksPercent;
 
     private float mBreakfastDegrees;
     private float mLunchDegrees;
@@ -47,6 +51,9 @@ public class CaloriesFromOccasionsDiagramView extends View {
     private float mDrinksDegrees;
 
     private RectF mDiagram;
+    private int mThicknessDiagram;
+
+    private float mDefaultWidth;
 
     public CaloriesFromOccasionsDiagramView(Context context) {
         super(context);
@@ -89,14 +96,53 @@ public class CaloriesFromOccasionsDiagramView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        initThicknessDiagram();
         initDiagram();
-        mBreakfastDiagramPaint.setStrokeWidth(100);
-        setBreakfastPercent(25);
-        canvas.drawArc(mDiagram, DEGREES_270_IS_12_HOURS_CLOCK, mBreakfastDegrees, false, mBreakfastDiagramPaint);
-//        canvas.drawArc(mDiagram, DEGREES_270_IS_12_HOURS_CLOCK, mLunchDegrees, false, mLunchDiagramPaint);
-//        canvas.drawArc(mDiagram, DEGREES_270_IS_12_HOURS_CLOCK, mDinnerDegrees, false, mDinnerDiagramPaint);
-//        canvas.drawArc(mDiagram, DEGREES_270_IS_12_HOURS_CLOCK, mDrinksDegrees, false, mDrinksDiagramPaint);
+
+        canvas.drawArc(mDiagram, accumulateDegreesFor(BREAKFAST_DEGREES_ID), mBreakfastDegrees,
+                false, mBreakfastDiagramPaint);
+        canvas.drawArc(mDiagram, accumulateDegreesFor(LUNCH_DEGREES_ID), mLunchDegrees,
+                false, mLunchDiagramPaint);
+        canvas.drawArc(mDiagram, accumulateDegreesFor(DINNER_DEGREES_ID), mDinnerDegrees,
+                false, mDinnerDiagramPaint);
+        canvas.drawArc(mDiagram, accumulateDegreesFor(DRINKS_DEGREES_ID), mDrinksDegrees,
+                false, mDrinksDiagramPaint);
     }
+
+    private void initThicknessDiagram(){
+        mDefaultWidth = mRadius / 2;
+        if (mThicknessDiagram == DEFAULT_THICKNESS_STATE){
+            updatePaintStrokeWidth(mBreakfastDiagramPaint, mDefaultWidth);
+            updatePaintStrokeWidth(mLunchDiagramPaint, mDefaultWidth);
+            updatePaintStrokeWidth(mDinnerDiagramPaint, mDefaultWidth);
+            updatePaintStrokeWidth(mDrinksDiagramPaint, mDefaultWidth);
+        } else {
+            updatePaintStrokeWidth(mBreakfastDiagramPaint, mThicknessDiagram);
+            updatePaintStrokeWidth(mLunchDiagramPaint, mThicknessDiagram);
+            updatePaintStrokeWidth(mDinnerDiagramPaint, mThicknessDiagram);
+            updatePaintStrokeWidth(mDrinksDiagramPaint, mThicknessDiagram);
+        }
+    }
+
+    private void updatePaintStrokeWidth(Paint paint, float width){
+        paint.setStrokeWidth(width);
+    }
+
+    private float accumulateDegreesFor(int typeSegment){
+        float resultStartDegrees = DEGREES_270_IS_12_HOURS_CLOCK;
+        switch (typeSegment){
+            case DRINKS_DEGREES_ID:
+                resultStartDegrees += mDinnerDegrees;
+            case DINNER_DEGREES_ID:
+                resultStartDegrees += mLunchDegrees;
+            case LUNCH_DEGREES_ID:
+                resultStartDegrees += mBreakfastDegrees;
+            case BREAKFAST_DEGREES_ID:
+                break;
+        }
+        return resultStartDegrees;
+    }
+
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -110,11 +156,13 @@ public class CaloriesFromOccasionsDiagramView extends View {
     private Paint createDiagramPaint(int flags,
                                      Paint.Style style,
                                      Paint.Cap strokeCap,
-                                     int color){
+                                     int color,
+                                     int strokeWidth){
         Paint diagramPaint = new Paint(flags);
         diagramPaint.setStyle(style);
         diagramPaint.setStrokeCap(strokeCap);
         diagramPaint.setColor(color);
+        diagramPaint.setStrokeWidth(strokeWidth);
 
         return diagramPaint;
     }
@@ -122,77 +170,146 @@ public class CaloriesFromOccasionsDiagramView extends View {
     private void initPaints(){
         mDiagram = new RectF();
         mBreakfastDiagramPaint = createDiagramPaint(Paint.ANTI_ALIAS_FLAG,
-                Paint.Style.STROKE, Paint.Cap.BUTT, mBreakfastColor);
+                Paint.Style.STROKE, Paint.Cap.BUTT, mBreakfastColor, mThicknessDiagram);
         mLunchDiagramPaint = createDiagramPaint(Paint.ANTI_ALIAS_FLAG,
-                Paint.Style.STROKE, Paint.Cap.BUTT, mLunchColor);
+                Paint.Style.STROKE, Paint.Cap.BUTT, mLunchColor, mThicknessDiagram);
         mDinnerDiagramPaint = createDiagramPaint(Paint.ANTI_ALIAS_FLAG,
-                Paint.Style.STROKE, Paint.Cap.BUTT, mDinnerColor);
+                Paint.Style.STROKE, Paint.Cap.BUTT, mDinnerColor, mThicknessDiagram);
         mDrinksDiagramPaint = createDiagramPaint(Paint.ANTI_ALIAS_FLAG,
-                Paint.Style.STROKE, Paint.Cap.BUTT, mDrinksColor);
-
+                Paint.Style.STROKE, Paint.Cap.BUTT, mDrinksColor, mThicknessDiagram);
     }
 
     private void initAttrs(Context context, AttributeSet attrs){
         TypedArray typedArray = context.getTheme().obtainStyledAttributes(attrs,
                 R.styleable.CaloriesFromOccasionsDiagramView, 0, 0);
         try{
-            mBreakfastColor = typedArray.getColor(R.styleable.CaloriesFromOccasionsDiagramView_breakfastColor,
+            mBreakfastColor = typedArray.getColor(
+                    R.styleable.CaloriesFromOccasionsDiagramView_breakfastColor,
                     ContextCompat.getColor(context, android.R.color.holo_orange_dark));
-            mLunchColor = typedArray.getColor(R.styleable.CaloriesFromOccasionsDiagramView_lunchColor,
+            mLunchColor = typedArray.getColor(
+                    R.styleable.CaloriesFromOccasionsDiagramView_lunchColor,
                     ContextCompat.getColor(context, android.R.color.holo_red_dark));
-            mDinnerColor = typedArray.getColor(R.styleable.CaloriesFromOccasionsDiagramView_dinnerColor,
+            mDinnerColor = typedArray.getColor(
+                    R.styleable.CaloriesFromOccasionsDiagramView_dinnerColor,
                     ContextCompat.getColor(context, android.R.color.holo_blue_dark));
-            mDrinksColor = typedArray.getColor(R.styleable.CaloriesFromOccasionsDiagramView_drinksColor,
+            mDrinksColor = typedArray.getColor(
+                    R.styleable.CaloriesFromOccasionsDiagramView_drinksColor,
                     ContextCompat.getColor(context, android.R.color.holo_green_dark));
 
-            mBreakfastPercent = typedArray.getInt(
-                    R.styleable.CaloriesFromOccasionsDiagramView_breakfastPercent, 25);
-            mLunchPercent = typedArray.getInt(
-                    R.styleable.CaloriesFromOccasionsDiagramView_lunchPercent, 12);
-            mDinnerPercent = typedArray.getInt(
-                    R.styleable.CaloriesFromOccasionsDiagramView_dinnerPercent, 25);
-            mDrinksPercent = typedArray.getInt(
-                    R.styleable.CaloriesFromOccasionsDiagramView_drinksPercent, 38);
+            mBreakfastPercent = typedArray.getFloat(
+                    R.styleable.CaloriesFromOccasionsDiagramView_breakfastPercent, 0.25f);
+            mLunchPercent = typedArray.getFloat(
+                    R.styleable.CaloriesFromOccasionsDiagramView_lunchPercent, 0.12f);
+            mDinnerPercent = typedArray.getFloat(
+                    R.styleable.CaloriesFromOccasionsDiagramView_dinnerPercent, 0.25f);
+            mDrinksPercent = typedArray.getFloat(
+                    R.styleable.CaloriesFromOccasionsDiagramView_drinksPercent, 0.38f);
 
+            updateBreakFastDegreesByPercents();
+            updateLunchDegreesByPercents();
+            updateDinnerDegreesByPercents();
+            updateDrinksDegreesByPercents();
+
+            mThicknessDiagram = typedArray.getDimensionPixelSize(
+                    R.styleable.CaloriesFromOccasionsDiagramView_thicknessDiagram,
+                    DEFAULT_THICKNESS_STATE);
         } finally {
             typedArray.recycle();
         }
     }
 
-    private int percentToDegrees(int percent){
-        return percent * (DEGREES_360/ONE_CIRCLE_IN_PERCENT);
+    private float percentToDegrees(float percent){
+        return percent * (DEGREES_360 / ONE_CIRCLE_IN_PERCENT_DECIMAL);
     }
 
-    public void setBreakfastPercent(int breakfastPercent) {
-        mBreakfastPercent = breakfastPercent;
+    private void updateBreakFastDegreesByPercents(){
         mBreakfastDegrees = percentToDegrees(mBreakfastPercent);
-        invalidate();
     }
 
-    public void setLunchPercent(int lunchPercent){
-        mLunchPercent = lunchPercent;
-        mLunchDegrees = percentToDegrees(mBreakfastPercent);
-        invalidate();
+    private void updateLunchDegreesByPercents(){
+        mLunchDegrees = percentToDegrees(mLunchPercent);
     }
 
-    public void setDinnerPercent(int dinnerPercent) {
-        mDinnerPercent = dinnerPercent;
-        mDinnerDegrees = percentToDegrees(dinnerPercent);
-        invalidate();
+    private void updateDinnerDegreesByPercents(){
+        mDinnerDegrees = percentToDegrees(mDinnerPercent);
     }
 
-    public void setDrinksPercent(int drinksPercent) {
-        mDrinksPercent = drinksPercent;
-        mDrinksDegrees = percentToDegrees(drinksPercent);
-        invalidate();
+    private void updateDrinksDegreesByPercents(){
+        mDrinksDegrees = percentToDegrees(mDrinksPercent);
     }
 
     private void initDiagram(){
-        int startTop = (int) mRadius / 2;
-        int startLeft = (int) mRadius / 2;
+        int startTop = (int) (mDefaultWidth / 2);
+        int startLeft = (int) (mDefaultWidth / 2);
         int endBottom = (int) (2 * mRadius - startTop);
         int endRight = (int) (2 * mRadius - startTop);
 
         mDiagram.set(startLeft, startTop, endRight, endBottom);
+    }
+
+
+    public void setBreakfastPercent(float breakfastPercent) {
+        mBreakfastPercent = breakfastPercent;
+        updateBreakFastDegreesByPercents();
+        invalidate();
+    }
+
+    public void setLunchPercent(float lunchPercent){
+        mLunchPercent = lunchPercent;
+        updateLunchDegreesByPercents();
+        invalidate();
+    }
+
+    public void setDinnerPercent(float dinnerPercent) {
+        mDinnerPercent = dinnerPercent;
+        updateDinnerDegreesByPercents();
+        invalidate();
+    }
+
+    public void setDrinksPercent(float drinksPercent) {
+        mDrinksPercent = drinksPercent;
+        updateDrinksDegreesByPercents();
+        invalidate();
+    }
+
+    public int getThicknessDiagram() {
+        return mThicknessDiagram;
+    }
+
+    public void setThicknessDiagram(int thicknessDiagram) {
+        mThicknessDiagram = thicknessDiagram;
+        invalidate();
+    }
+
+    public int getBreakfastColor() {
+        return mBreakfastColor;
+    }
+
+    public void setBreakfastColor(int breakfastColor) {
+        mBreakfastColor = breakfastColor;
+    }
+
+    public int getLunchColor() {
+        return mLunchColor;
+    }
+
+    public void setLunchColor(int lunchColor) {
+        mLunchColor = lunchColor;
+    }
+
+    public int getDinnerColor() {
+        return mDinnerColor;
+    }
+
+    public void setDinnerColor(int dinnerColor) {
+        mDinnerColor = dinnerColor;
+    }
+
+    public int getDrinksColor() {
+        return mDrinksColor;
+    }
+
+    public void setDrinksColor(int drinksColor) {
+        mDrinksColor = drinksColor;
     }
 }

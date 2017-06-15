@@ -15,10 +15,10 @@
         <attr name="lunchColor" format="color"/>
         <attr name="dinnerColor" format="color"/>
         <attr name="drinksColor" format="color"/>
-        <attr name="breakfastPercent" format="integer"/>
-        <attr name="lunchPercent" format="integer"/>
-        <attr name="dinnerPercent" format="integer"/>
-        <attr name="drinksPercent" format="integer"/>
+        <attr name="breakfastPercent" format="float"/>
+        <attr name="lunchPercent" format="float"/>
+        <attr name="dinnerPercent" format="float"/>
+        <attr name="drinksPercent" format="float"/>
         <attr name="thicknessDiagram" format="dimension"/>
     </declare-styleable>
 </resources>

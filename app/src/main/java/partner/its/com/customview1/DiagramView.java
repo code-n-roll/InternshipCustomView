@@ -38,9 +38,9 @@ public class DiagramView extends View {
 
     private int mPercentageCount;
     private int mPercentageCountInDegrees;
-    private int mPercentageSize = 0;
+    private int mPercentageTextSize = 0;
 
-    private boolean mHasPercentageSize;
+    private boolean mHasPercentageTextSize;
 
     private RectF mDiagram;
 
@@ -78,8 +78,8 @@ public class DiagramView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         initDiagram();
-        initPercentageSizeToDefault();
-        mForegroundPaint.setStrokeWidth(mCenterX);
+        initPercentageTextSizeToDefault();
+        mForegroundPaint.setStrokeWidth(2 * mRadius);
 
         canvas.drawCircle(mCenterX, mCenterY, mRadius, mBackgroundPaint);
         canvas.drawArc(mDiagram, DEGREES_270_IS_12_HOURS_CLOCK, mPercentageCountInDegrees, false, mForegroundPaint);
@@ -119,11 +119,11 @@ public class DiagramView extends View {
             updatePercentageCountInDegrees(mPercentageCount);
 
             if (typedArray.hasValue(R.styleable.DiagramView_percentageTextSize)) {
-                mPercentageSize = typedArray.getDimensionPixelSize(
+                mPercentageTextSize = typedArray.getDimensionPixelSize(
                         R.styleable.DiagramView_percentageTextSize, 0);
-                mHasPercentageSize = true;
+                mHasPercentageTextSize = true;
             } else {
-                mHasPercentageSize = false;
+                mHasPercentageTextSize = false;
             }
         } finally {
             typedArray.recycle();
@@ -138,10 +138,10 @@ public class DiagramView extends View {
         mDiagram.set(startLeft, startTop, endRight, endBottom);
     }
 
-    private void initPercentageSizeToDefault(){
-        if (!mHasPercentageSize){
-            mPercentageSize = (int)(mRadius/1.25f);
-            mPercentagePaint.setTextSize(mPercentageSize);
+    private void initPercentageTextSizeToDefault(){
+        if (!mHasPercentageTextSize){
+            mPercentageTextSize = (int)(mRadius/1.25f);
+            mPercentagePaint.setTextSize(mPercentageTextSize);
         }
     }
 

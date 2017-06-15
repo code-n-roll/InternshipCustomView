@@ -28,8 +28,6 @@ public class DiagramViewFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         final DiagramView diagramView = (DiagramView) view.findViewById(R.id.diagram_view);
-        final SeekBar seekBarPercentage = (SeekBar) view.findViewById(R.id.seekBarPercentage);
-        seekBarPercentage.setProgress(diagramView.getPercentageCount());
 
         SeekBar.OnSeekBarChangeListener seekBarPercentageChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -47,9 +45,10 @@ public class DiagramViewFragment extends Fragment {
 
             }
         };
+        final SeekBar seekBarPercentage = (SeekBar) view.findViewById(R.id.seekBarPercentage);
+        seekBarPercentage.setProgress(diagramView.getPercentageCount());
         seekBarPercentage.setOnSeekBarChangeListener(seekBarPercentageChangeListener);
 
-        SeekBar seekBarSize = (SeekBar) view.findViewById(R.id.seekBarSize);
         SeekBar.OnSeekBarChangeListener seekBarSizeChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -66,13 +65,12 @@ public class DiagramViewFragment extends Fragment {
 
             }
         };
+        SeekBar seekBarSize = (SeekBar) view.findViewById(R.id.seekBarSize);
         seekBarSize.setOnSeekBarChangeListener(seekBarSizeChangeListener);
         seekBarSize.setProgress(diagramView.getLayoutParams().width);
 
         final Random randomColor = new Random();
 
-
-        SeekBar seekBarBackground = (SeekBar) view.findViewById(R.id.seekBarBackgroundColor);
         SeekBar.OnSeekBarChangeListener seekBarBackgroundChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -91,11 +89,9 @@ public class DiagramViewFragment extends Fragment {
 
             }
         };
+        SeekBar seekBarBackground = (SeekBar) view.findViewById(R.id.seekBarBackgroundColor);
         seekBarBackground.setOnSeekBarChangeListener(seekBarBackgroundChangeListener);
 
-
-
-        SeekBar seekBarForeground = (SeekBar) view.findViewById(R.id.seekBarForegroundColor);
         SeekBar.OnSeekBarChangeListener seekBarForegroundChangeListener = new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -114,6 +110,7 @@ public class DiagramViewFragment extends Fragment {
 
             }
         };
+        SeekBar seekBarForeground = (SeekBar) view.findViewById(R.id.seekBarForegroundColor);
         seekBarForeground.setOnSeekBarChangeListener(seekBarForegroundChangeListener);
     }
 
