@@ -1,96 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/main_container">
 
-    <partner.its.com.customview1.DiagramView
-        android:id="@+id/diagram_view"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
-        app:percentageTextColor="@android:color/white"
-        app:warningBackgroundColor="@android:color/holo_red_light"
-        app:warningForegroundColor="@android:color/holo_red_dark" />
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="percentage"
-            android:layout_gravity="start|center_vertical"/>
-        <SeekBar
-            android:id="@+id/seekBarPercentage"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:layout_gravity="end"
-            android:max="250"
-            android:progress="1" />
-    </FrameLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="size"
-            android:layout_gravity="start|center_vertical"
-            android:layout_centerVertical="true"/>
-        <SeekBar
-            android:id="@+id/seekBarSize"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:layout_gravity="end"
-            android:max="1080"
-            android:progress="5"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"/>
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="bg color"
-            android:layout_gravity="start|center_vertical"
-            android:layout_centerVertical="true"/>
-        <SeekBar
-            android:id="@+id/seekBarBackgroundColor"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:layout_gravity="end"
-            android:max="255"
-            android:progress="50"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"/>
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="fg color"
-            android:layout_gravity="start|center_vertical"
-            android:layout_centerVertical="true"/>
-        <SeekBar
-            android:id="@+id/seekBarForegroundColor"
-            android:layout_width="300dp"
-            android:layout_height="50dp"
-            android:layout_gravity="end"
-            android:max="255"
-            android:progress="50"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"/>
-    </RelativeLayout>
 </LinearLayout>

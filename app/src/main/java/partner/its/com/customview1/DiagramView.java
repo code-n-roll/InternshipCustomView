@@ -69,11 +69,6 @@ public class DiagramView extends View {
     }
 
     @Override
-    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-
-    }
-
-    @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         mCenterX = w / 2f;
         mCenterY = h / 2f;

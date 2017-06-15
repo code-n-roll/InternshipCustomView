@@ -9,4 +9,16 @@
         <attr name="percentageValue" format="integer"/>
         <attr name="percentageTextSize" format="dimension"/>
     </declare-styleable>
+
+    <declare-styleable name="CaloriesFromOccasionsDiagramView">
+        <attr name="breakfastColor" format="color"/>
+        <attr name="lunchColor" format="color"/>
+        <attr name="dinnerColor" format="color"/>
+        <attr name="drinksColor" format="color"/>
+        <attr name="breakfastPercent" format="integer"/>
+        <attr name="lunchPercent" format="integer"/>
+        <attr name="dinnerPercent" format="integer"/>
+        <attr name="drinksPercent" format="integer"/>
+        <attr name="thicknessDiagram" format="dimension"/>
+    </declare-styleable>
 </resources>
