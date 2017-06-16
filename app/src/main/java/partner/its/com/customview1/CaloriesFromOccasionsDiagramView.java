@@ -24,7 +24,7 @@ public class CaloriesFromOccasionsDiagramView extends View {
     private final static int LUNCH_DEGREES_ID = 1;
     private final static int DINNER_DEGREES_ID = 2;
     private final static int DRINKS_DEGREES_ID = 3;
-    private final static int DEFAULT_THICKNESS_STATE = -1;
+    private final static int DELTA = 1;
 
     private Paint mBreakfastDiagramPaint;
     private Paint mLunchDiagramPaint;
@@ -52,8 +52,7 @@ public class CaloriesFromOccasionsDiagramView extends View {
 
     private RectF mDiagram;
     private int mThicknessDiagram;
-
-    private float mDefaultWidth;
+    private boolean mHasThicknessDiagram;
 
     public CaloriesFromOccasionsDiagramView(Context context) {
         super(context);
@@ -99,29 +98,33 @@ public class CaloriesFromOccasionsDiagramView extends View {
         initThicknessDiagram();
         initDiagram();
 
-        canvas.drawArc(mDiagram, accumulateDegreesFor(BREAKFAST_DEGREES_ID), mBreakfastDegrees,
+        canvas.drawArc(mDiagram, accumulateDegreesFor(BREAKFAST_DEGREES_ID), mBreakfastDegrees+DELTA,
                 false, mBreakfastDiagramPaint);
-        canvas.drawArc(mDiagram, accumulateDegreesFor(LUNCH_DEGREES_ID), mLunchDegrees,
+        canvas.drawArc(mDiagram, accumulateDegreesFor(LUNCH_DEGREES_ID), mLunchDegrees+DELTA,
                 false, mLunchDiagramPaint);
-        canvas.drawArc(mDiagram, accumulateDegreesFor(DINNER_DEGREES_ID), mDinnerDegrees,
+        canvas.drawArc(mDiagram, accumulateDegreesFor(DINNER_DEGREES_ID), mDinnerDegrees+DELTA,
                 false, mDinnerDiagramPaint);
-        canvas.drawArc(mDiagram, accumulateDegreesFor(DRINKS_DEGREES_ID), mDrinksDegrees,
+        canvas.drawArc(mDiagram, accumulateDegreesFor(DRINKS_DEGREES_ID), mDrinksDegrees+DELTA*2,
                 false, mDrinksDiagramPaint);
     }
 
     private void initThicknessDiagram(){
-        mDefaultWidth = mRadius / 2;
-        if (mThicknessDiagram == DEFAULT_THICKNESS_STATE){
-            updatePaintStrokeWidth(mBreakfastDiagramPaint, mDefaultWidth);
-            updatePaintStrokeWidth(mLunchDiagramPaint, mDefaultWidth);
-            updatePaintStrokeWidth(mDinnerDiagramPaint, mDefaultWidth);
-            updatePaintStrokeWidth(mDrinksDiagramPaint, mDefaultWidth);
-        } else {
-            updatePaintStrokeWidth(mBreakfastDiagramPaint, mThicknessDiagram);
-            updatePaintStrokeWidth(mLunchDiagramPaint, mThicknessDiagram);
-            updatePaintStrokeWidth(mDinnerDiagramPaint, mThicknessDiagram);
-            updatePaintStrokeWidth(mDrinksDiagramPaint, mThicknessDiagram);
+        if (!mHasThicknessDiagram){
+            mThicknessDiagram = (int) mRadius / 2;
         }
+        updatePaintStrokeWidth(mBreakfastDiagramPaint, mThicknessDiagram);
+        updatePaintStrokeWidth(mLunchDiagramPaint, mThicknessDiagram);
+        updatePaintStrokeWidth(mDinnerDiagramPaint, mThicknessDiagram);
+        updatePaintStrokeWidth(mDrinksDiagramPaint, mThicknessDiagram);
+    }
+
+    private void initDiagram(){
+        int startTop = mThicknessDiagram / 2;
+        int startLeft = mThicknessDiagram / 2;
+        int endBottom = (int) (2 * mRadius - startTop);
+        int endRight = (int) (2 * mRadius - startLeft);
+
+        mDiagram.set(startLeft, startTop, endRight, endBottom);
     }
 
     private void updatePaintStrokeWidth(Paint paint, float width){
@@ -210,9 +213,14 @@ public class CaloriesFromOccasionsDiagramView extends View {
             updateDinnerDegreesByPercents();
             updateDrinksDegreesByPercents();
 
+            if (typedArray.hasValue(R.styleable.CaloriesFromOccasionsDiagramView_thicknessDiagram)){
+                mHasThicknessDiagram = true;
+            } else {
+                mHasThicknessDiagram = false;
+            }
             mThicknessDiagram = typedArray.getDimensionPixelSize(
                     R.styleable.CaloriesFromOccasionsDiagramView_thicknessDiagram,
-                    DEFAULT_THICKNESS_STATE);
+                    50);
         } finally {
             typedArray.recycle();
         }
@@ -237,16 +245,6 @@ public class CaloriesFromOccasionsDiagramView extends View {
     private void updateDrinksDegreesByPercents(){
         mDrinksDegrees = percentToDegrees(mDrinksPercent);
     }
-
-    private void initDiagram(){
-        int startTop = (int) (mDefaultWidth / 2);
-        int startLeft = (int) (mDefaultWidth / 2);
-        int endBottom = (int) (2 * mRadius - startTop);
-        int endRight = (int) (2 * mRadius - startTop);
-
-        mDiagram.set(startLeft, startTop, endRight, endBottom);
-    }
-
 
     public void setBreakfastPercent(float breakfastPercent) {
         mBreakfastPercent = breakfastPercent;
@@ -278,6 +276,7 @@ public class CaloriesFromOccasionsDiagramView extends View {
 
     public void setThicknessDiagram(int thicknessDiagram) {
         mThicknessDiagram = thicknessDiagram;
+        mHasThicknessDiagram = true;
         invalidate();
     }
 
