@@ -79,7 +79,7 @@ public class DiagramView extends View {
     protected void onDraw(Canvas canvas) {
         initDiagram();
         initPercentageTextSizeToDefault();
-        mForegroundPaint.setStrokeWidth(2 * mRadius);
+        mForegroundPaint.setStrokeWidth(mRadius);
 
         canvas.drawCircle(mCenterX, mCenterY, mRadius, mBackgroundPaint);
         canvas.drawArc(mDiagram, DEGREES_270_IS_12_HOURS_CLOCK, mPercentageCountInDegrees, false, mForegroundPaint);

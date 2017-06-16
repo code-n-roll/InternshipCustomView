@@ -67,6 +67,6 @@ public class CaloriesFromOccasionFragment extends Fragment {
             }
         };
         seekBarSize.setOnSeekBarChangeListener(seekBarSizeChangeListener);
-        seekBarSize.setProgress(diagramView.getLayoutParams().width);
+//        seekBarSize.setProgress(diagramView.getLayoutParams().width);
     }
 }

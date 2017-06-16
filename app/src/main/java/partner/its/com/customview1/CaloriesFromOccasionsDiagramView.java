@@ -25,6 +25,7 @@ public class CaloriesFromOccasionsDiagramView extends View {
     private final static int DINNER_DEGREES_ID = 2;
     private final static int DRINKS_DEGREES_ID = 3;
     private final static int DELTA = 1;
+    private final static int SCALE_COEFF_FOR_DESIRED_SIZE = 4;
 
     private Paint mBreakfastDiagramPaint;
     private Paint mLunchDiagramPaint;
@@ -149,11 +150,36 @@ public class CaloriesFromOccasionsDiagramView extends View {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int w = MeasureSpec.getSize(widthMeasureSpec);
-        int h = MeasureSpec.getSize(heightMeasureSpec);
+        int desiredWidth = mThicknessDiagram * SCALE_COEFF_FOR_DESIRED_SIZE;
+        int desiredHeight = mThicknessDiagram * SCALE_COEFF_FOR_DESIRED_SIZE;
 
-        int size = Math.min(w, h);
+        int widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        int heightSize = MeasureSpec.getSize(heightMeasureSpec);
+
+        int widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        int heightMode = MeasureSpec.getMode(heightMeasureSpec);
+
+        int width = handleAutosizes(widthMode, desiredWidth, widthSize);
+        int height = handleAutosizes(heightMode, desiredHeight, heightSize);
+
+        int size = Math.min(width, height);
         setMeasuredDimension(size, size);
+    }
+
+    private int handleAutosizes(int mode, int desiredSize, int size){
+        int resultSize;
+        switch (mode){
+            case MeasureSpec.EXACTLY:
+                resultSize = size;
+                break;
+            case MeasureSpec.AT_MOST:
+                resultSize = Math.min(desiredSize, size);
+                break;
+            default:
+                resultSize = desiredSize;
+                break;
+        }
+        return resultSize;
     }
 
     private Paint createDiagramPaint(int flags,
