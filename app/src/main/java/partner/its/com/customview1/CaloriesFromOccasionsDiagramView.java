@@ -23,19 +23,19 @@ public class CaloriesFromOccasionsDiagramView extends View {
     private final static int BREAKFAST_DEGREES_ID = 0;
     private final static int LUNCH_DEGREES_ID = 1;
     private final static int DINNER_DEGREES_ID = 2;
-    private final static int DRINKS_DEGREES_ID = 3;
+    private final static int SNACKS_DEGREES_ID = 3;
     private final static int DELTA = 1;
     private final static int SCALE_COEFF_FOR_DESIRED_SIZE = 4;
 
     private Paint mBreakfastDiagramPaint;
     private Paint mLunchDiagramPaint;
     private Paint mDinnerDiagramPaint;
-    private Paint mDrinksDiagramPaint;
+    private Paint mSnacksDiagramPaint;
 
     private int mBreakfastColor;
     private int mLunchColor;
     private int mDinnerColor;
-    private int mDrinksColor;
+    private int mSnacksColor;
 
     private float mCenterX;
     private float mCenterY;
@@ -44,12 +44,12 @@ public class CaloriesFromOccasionsDiagramView extends View {
     private float mBreakfastPercent;
     private float mLunchPercent;
     private float mDinnerPercent;
-    private float mDrinksPercent;
+    private float mSnacksPercent;
 
     private float mBreakfastDegrees;
     private float mLunchDegrees;
     private float mDinnerDegrees;
-    private float mDrinksDegrees;
+    private float mSnacksDegrees;
 
     private RectF mDiagram;
     private int mThicknessDiagram;
@@ -105,8 +105,8 @@ public class CaloriesFromOccasionsDiagramView extends View {
                 false, mLunchDiagramPaint);
         canvas.drawArc(mDiagram, accumulateDegreesFor(DINNER_DEGREES_ID), mDinnerDegrees+DELTA,
                 false, mDinnerDiagramPaint);
-        canvas.drawArc(mDiagram, accumulateDegreesFor(DRINKS_DEGREES_ID), mDrinksDegrees+DELTA*2,
-                false, mDrinksDiagramPaint);
+        canvas.drawArc(mDiagram, accumulateDegreesFor(SNACKS_DEGREES_ID), mSnacksDegrees +DELTA*2,
+                false, mSnacksDiagramPaint);
     }
 
     private void initThicknessDiagram(){
@@ -116,7 +116,7 @@ public class CaloriesFromOccasionsDiagramView extends View {
         updatePaintStrokeWidth(mBreakfastDiagramPaint, mThicknessDiagram);
         updatePaintStrokeWidth(mLunchDiagramPaint, mThicknessDiagram);
         updatePaintStrokeWidth(mDinnerDiagramPaint, mThicknessDiagram);
-        updatePaintStrokeWidth(mDrinksDiagramPaint, mThicknessDiagram);
+        updatePaintStrokeWidth(mSnacksDiagramPaint, mThicknessDiagram);
     }
 
     private void initDiagram(){
@@ -135,7 +135,7 @@ public class CaloriesFromOccasionsDiagramView extends View {
     private float accumulateDegreesFor(int typeSegment){
         float resultStartDegrees = DEGREES_270_IS_12_HOURS_CLOCK;
         switch (typeSegment){
-            case DRINKS_DEGREES_ID:
+            case SNACKS_DEGREES_ID:
                 resultStartDegrees += mDinnerDegrees;
             case DINNER_DEGREES_ID:
                 resultStartDegrees += mLunchDegrees;
@@ -204,8 +204,8 @@ public class CaloriesFromOccasionsDiagramView extends View {
                 Paint.Style.STROKE, Paint.Cap.BUTT, mLunchColor, mThicknessDiagram);
         mDinnerDiagramPaint = createDiagramPaint(Paint.ANTI_ALIAS_FLAG,
                 Paint.Style.STROKE, Paint.Cap.BUTT, mDinnerColor, mThicknessDiagram);
-        mDrinksDiagramPaint = createDiagramPaint(Paint.ANTI_ALIAS_FLAG,
-                Paint.Style.STROKE, Paint.Cap.BUTT, mDrinksColor, mThicknessDiagram);
+        mSnacksDiagramPaint = createDiagramPaint(Paint.ANTI_ALIAS_FLAG,
+                Paint.Style.STROKE, Paint.Cap.BUTT, mSnacksColor, mThicknessDiagram);
     }
 
     private void initAttrs(Context context, AttributeSet attrs){
@@ -221,8 +221,8 @@ public class CaloriesFromOccasionsDiagramView extends View {
             mDinnerColor = typedArray.getColor(
                     R.styleable.CaloriesFromOccasionsDiagramView_dinnerColor,
                     ContextCompat.getColor(context, android.R.color.holo_blue_dark));
-            mDrinksColor = typedArray.getColor(
-                    R.styleable.CaloriesFromOccasionsDiagramView_drinksColor,
+            mSnacksColor = typedArray.getColor(
+                    R.styleable.CaloriesFromOccasionsDiagramView_snacksColor,
                     ContextCompat.getColor(context, android.R.color.holo_green_dark));
 
             mBreakfastPercent = typedArray.getFloat(
@@ -231,13 +231,13 @@ public class CaloriesFromOccasionsDiagramView extends View {
                     R.styleable.CaloriesFromOccasionsDiagramView_lunchPercent, 0.12f);
             mDinnerPercent = typedArray.getFloat(
                     R.styleable.CaloriesFromOccasionsDiagramView_dinnerPercent, 0.25f);
-            mDrinksPercent = typedArray.getFloat(
-                    R.styleable.CaloriesFromOccasionsDiagramView_drinksPercent, 0.38f);
+            mSnacksPercent = typedArray.getFloat(
+                    R.styleable.CaloriesFromOccasionsDiagramView_snacksPercent, 0.38f);
 
             updateBreakFastDegreesByPercents();
             updateLunchDegreesByPercents();
             updateDinnerDegreesByPercents();
-            updateDrinksDegreesByPercents();
+            updateSnacksDegreesByPercents();
 
             if (typedArray.hasValue(R.styleable.CaloriesFromOccasionsDiagramView_thicknessDiagram)){
                 mHasThicknessDiagram = true;
@@ -268,8 +268,8 @@ public class CaloriesFromOccasionsDiagramView extends View {
         mDinnerDegrees = percentToDegrees(mDinnerPercent);
     }
 
-    private void updateDrinksDegreesByPercents(){
-        mDrinksDegrees = percentToDegrees(mDrinksPercent);
+    private void updateSnacksDegreesByPercents(){
+        mSnacksDegrees = percentToDegrees(mSnacksPercent);
     }
 
     public void setBreakfastPercent(float breakfastPercent) {
@@ -290,9 +290,9 @@ public class CaloriesFromOccasionsDiagramView extends View {
         invalidate();
     }
 
-    public void setDrinksPercent(float drinksPercent) {
-        mDrinksPercent = drinksPercent;
-        updateDrinksDegreesByPercents();
+    public void setSnacksPercent(float snacksPercent) {
+        mSnacksPercent = snacksPercent;
+        updateSnacksDegreesByPercents();
         invalidate();
     }
 
@@ -330,11 +330,11 @@ public class CaloriesFromOccasionsDiagramView extends View {
         mDinnerColor = dinnerColor;
     }
 
-    public int getDrinksColor() {
-        return mDrinksColor;
+    public int getSnacksColor() {
+        return mSnacksColor;
     }
 
-    public void setDrinksColor(int drinksColor) {
-        mDrinksColor = drinksColor;
+    public void setSnacksColor(int snacksColor) {
+        mSnacksColor = snacksColor;
     }
 }
