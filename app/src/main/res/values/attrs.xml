@@ -31,6 +31,5 @@
         <attr name="caloriesBudgetColor" format="color"/>
         <attr name="caloriesActiveColor" format="color"/>
         <attr name="caloriesWarningColor" format="color"/>
-        <attr name="thicknessProgressView" format="dimension"/>
     </declare-styleable>
 </resources>

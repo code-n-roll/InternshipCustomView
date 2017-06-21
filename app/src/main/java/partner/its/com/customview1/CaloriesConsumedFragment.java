@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 
 /**
@@ -26,13 +27,20 @@ public class CaloriesConsumedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mProgressView = (CaloriesConsumedProgressView) view.findViewById(R.id.calories_consumed_progress);
+        mProgressView.setCaloriesBudget(500);
         SeekBar consumedSeekbar = (SeekBar) view.findViewById(R.id.seekbar_consumed);
         SeekBar activeSeekbar = (SeekBar) view.findViewById(R.id.seekbar_active);
-        consumedSeekbar.setOnSeekBarChangeListener(consumedListener);
-        activeSeekbar.setOnSeekBarChangeListener(activeListener);
+        SeekBar widthSeekbar = (SeekBar) view.findViewById(R.id.seekbar_width);
+        SeekBar heightSeekbar = (SeekBar) view.findViewById(R.id.seekbar_height);
+        widthSeekbar.setOnSeekBarChangeListener(mWidthListener);
+        heightSeekbar.setOnSeekBarChangeListener(mHeightListener);
+        consumedSeekbar.setOnSeekBarChangeListener(mConsumedListener);
+        activeSeekbar.setOnSeekBarChangeListener(mActiveListener);
+        consumedSeekbar.setMax(mProgressView.getCaloriesBudget());
+        activeSeekbar.setMax(mProgressView.getCaloriesBudget());
     }
 
-    private SeekBar.OnSeekBarChangeListener consumedListener = new SeekBar.OnSeekBarChangeListener() {
+    private SeekBar.OnSeekBarChangeListener mConsumedListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             mProgressView.setCaloriesConsumed(progress);
@@ -48,7 +56,9 @@ public class CaloriesConsumedFragment extends Fragment {
 
         }
     };
-    private SeekBar.OnSeekBarChangeListener activeListener = new SeekBar.OnSeekBarChangeListener() {
+
+
+    private SeekBar.OnSeekBarChangeListener mActiveListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             mProgressView.setCaloriesActive(progress);
@@ -64,4 +74,40 @@ public class CaloriesConsumedFragment extends Fragment {
 
         }
     };
+
+    private SeekBar.OnSeekBarChangeListener mWidthListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            mProgressView.setLayoutParams(new LinearLayout.LayoutParams(progress, mProgressView.getHeight()));
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
+
+    private SeekBar.OnSeekBarChangeListener mHeightListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            mProgressView.setLayoutParams(new LinearLayout.LayoutParams(mProgressView.getWidth(), progress));
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
+
+
 }
