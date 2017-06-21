@@ -3,10 +3,39 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="wrap_content">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/calories_consumed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="50cal"
+            android:textColor="@android:color/black"
+            android:layout_gravity="start"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/calories_budget"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1,000cal + "
+                android:textColor="@android:color/black"/>
+            <TextView
+                android:id="@+id/calories_active"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100cal"
+                android:textColor="@android:color/holo_blue_bright"/>
+        </LinearLayout>
+    </FrameLayout>
     <partner.its.com.customview1.CaloriesConsumedProgressView
         android:id="@+id/calories_consumed_progress"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="50dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -20,7 +49,7 @@
             android:id="@+id/seekbar_consumed"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:max="500"
+            android:max="9000"
             android:progress="0"/>
     </LinearLayout>
     <LinearLayout
@@ -35,7 +64,7 @@
             android:id="@+id/seekbar_active"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:max="500"
+            android:max="100"
             android:progress="0"/>
     </LinearLayout>
     <LinearLayout

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 /**
  * Created by roman on 20.6.17.
@@ -15,6 +16,9 @@ import android.widget.SeekBar;
 
 public class CaloriesConsumedFragment extends Fragment {
     private CaloriesConsumedProgressView mProgressView;
+    private TextView caloriesBudget;
+    private TextView caloriesConsumed;
+    private TextView caloriesActive;
 
     @Nullable
     @Override
@@ -27,7 +31,10 @@ public class CaloriesConsumedFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         mProgressView = (CaloriesConsumedProgressView) view.findViewById(R.id.calories_consumed_progress);
-        mProgressView.setCaloriesBudget(500);
+        caloriesConsumed = (TextView) view.findViewById(R.id.calories_consumed);
+        caloriesActive = (TextView) view.findViewById(R.id.calories_active);
+        caloriesBudget = (TextView) view.findViewById(R.id.calories_budget);
+
         SeekBar consumedSeekbar = (SeekBar) view.findViewById(R.id.seekbar_consumed);
         SeekBar activeSeekbar = (SeekBar) view.findViewById(R.id.seekbar_active);
         SeekBar widthSeekbar = (SeekBar) view.findViewById(R.id.seekbar_width);
@@ -36,14 +43,16 @@ public class CaloriesConsumedFragment extends Fragment {
         heightSeekbar.setOnSeekBarChangeListener(mHeightListener);
         consumedSeekbar.setOnSeekBarChangeListener(mConsumedListener);
         activeSeekbar.setOnSeekBarChangeListener(mActiveListener);
-        consumedSeekbar.setMax(mProgressView.getCaloriesBudget());
-        activeSeekbar.setMax(mProgressView.getCaloriesBudget());
+        consumedSeekbar.setMax(mProgressView.getCaloriesConsumed() + 2000);
+        activeSeekbar.setMax(mProgressView.getCaloriesActive() + 500);
     }
 
     private SeekBar.OnSeekBarChangeListener mConsumedListener = new SeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             mProgressView.setCaloriesConsumed(progress);
+            String text = mProgressView.getCaloriesConsumed()+"cal";
+            caloriesConsumed.setText(text);
         }
 
         @Override
@@ -62,6 +71,8 @@ public class CaloriesConsumedFragment extends Fragment {
         @Override
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             mProgressView.setCaloriesActive(progress);
+            String text = mProgressView.getCaloriesActive() + "cal";
+            caloriesActive.setText(text);
         }
 
         @Override

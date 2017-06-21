@@ -24,6 +24,7 @@ public class CaloriesConsumedProgressView extends View {
     private static final int MIN_DESIRED_HEIGHT = 50;
     private Paint mConsumedPaint;
     private Paint mActivePaint;
+    private Paint mWarningPaint;
 
     private int mConsumedColor;
     private int mBudgetColor;
@@ -33,17 +34,26 @@ public class CaloriesConsumedProgressView extends View {
     private int mCaloriesConsumed;
     private int mCaloriesBudget;
     private int mCaloriesActive;
+    private int mCaloriesFull;
     private int mCaloriesWarning;
 
     private double mPercentConsumed;
     private double mPercentBudget;
     private double mPercentActive;
+    private double mPercentBudgetActive;
+    private double mPercentFull;
+    private double mPercentWarning;
 
     private RectF mConsumedRectF;
     private RectF mActiveRectF;
+    private RectF mWarningRectF;
 
     private int mConsumedWidth;
     private int mConsumedHeight;
+    private int mBudgetWidth;
+    private int mBudgetHeight;
+    private int mWarningWidth;
+    private int mWarningHeight;
     private int mActiveWidth;
     private int mActiveHeight;
 
@@ -76,10 +86,15 @@ public class CaloriesConsumedProgressView extends View {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         mConsumedHeight = h;
         mActiveHeight = h;
+        mWarningHeight = h;
         updateConsumedWidth();
         updateActiveWidth();
+        updateWarningWidth();
+
+        // when resized
         updatePercentConsumed();
         updatePercentActive();
+        updatePercentWarning();
     }
 
     @Override
@@ -87,6 +102,7 @@ public class CaloriesConsumedProgressView extends View {
         setRectsF();
         canvas.drawRect(mConsumedRectF, mConsumedPaint);
         canvas.drawRect(mActiveRectF, mActivePaint);
+        canvas.drawRect(mWarningRectF, mWarningPaint);
     }
 
     @Override
@@ -131,52 +147,88 @@ public class CaloriesConsumedProgressView extends View {
             mWarningColor = typedArray.getColor(R.styleable.CaloriesConsumedProgressView_caloriesWarningColor,
                     ContextCompat.getColor(context, android.R.color.holo_red_light));
 
-            mCaloriesActive = typedArray.getInteger(R.styleable.CaloriesConsumedProgressView_caloriesActive, 100);
-            mCaloriesConsumed = typedArray.getInteger(R.styleable.CaloriesConsumedProgressView_caloriesConsumed, 100);
-            mCaloriesBudget = typedArray.getInteger(R.styleable.CaloriesConsumedProgressView_caloriesBudget, 500);
-            mCaloriesWarning = typedArray.getInteger(R.styleable.CaloriesConsumedProgressView_caloriesWarning, 300);
+            mCaloriesActive = typedArray.getInteger(R.styleable.CaloriesConsumedProgressView_caloriesActive, 0);
+            mCaloriesConsumed = typedArray.getInteger(R.styleable.CaloriesConsumedProgressView_caloriesConsumed, 0);
+            mCaloriesBudget = typedArray.getInteger(R.styleable.CaloriesConsumedProgressView_caloriesBudget, 1000);
+            updateCaloriesFull();
+//            mCaloriesWarning = mCaloriesFull - mCaloriesBudget - mCaloriesActive;
+            mCaloriesWarning = 0;
 
+            setPercentFull(PERCENT_100);
             updatePercentConsumed();
             updatePercentActive();
-            setPercentBudget(PERCENT_100);
+            updatePercentWarning();
 
             updateConsumedWidth();
             updateActiveWidth();
+            updateWarningWidth();
         } finally {
             typedArray.recycle();
         }
     }
 
+    private void updatePercentBudget(){
+        mPercentBudget = ((double)mCaloriesBudget / mCaloriesFull) * mPercentFull;
+    }
+
+    private void updatePercentWarning(){
+        mPercentWarning = ((double)mCaloriesWarning / mCaloriesFull) * mPercentFull;
+    }
+
+    private void updatePercentBudgetActive(){
+        mPercentBudgetActive = ((mCaloriesBudget + mCaloriesActive)/(double)mCaloriesFull) * mPercentFull;
+    }
+
     private void updatePercentConsumed(){
-        mPercentConsumed = ((double)mCaloriesConsumed / mCaloriesBudget) * mPercentBudget;
+        mPercentConsumed = ((double)mCaloriesConsumed / mCaloriesFull) * mPercentFull;
     }
 
     private void updatePercentActive(){
-        mPercentActive = ((double)mCaloriesActive / mCaloriesBudget) * mPercentBudget;
+        mPercentActive = ((double)mCaloriesActive / mCaloriesFull) * mPercentFull;
+    }
+
+    private void updateWarningWidth(){
+        mWarningWidth = (int)((mPercentWarning / mPercentFull) * getWidth());
     }
 
     private void updateConsumedWidth(){
-        mConsumedWidth = (int)((mPercentConsumed/mPercentBudget)*getWidth());
+        mConsumedWidth = (int)((mPercentConsumed / mPercentFull) * getWidth());
     }
 
     private void updateActiveWidth(){
-        mActiveWidth = (int)((mPercentActive/mPercentBudget)*getWidth());
+        mActiveWidth = (int)((mPercentActive / mPercentFull) * getWidth());
     }
 
-    private void setPercentBudget(int budget){
-        mPercentBudget = budget;
+    private void updateBudgetWidth(){
+        mBudgetWidth = (int)((mPercentBudget/ mPercentFull) * getWidth());
+    }
+
+    private void setPercentBudget(int percent){
+        mPercentBudget = percent;
+    }
+
+    private void setPercentBudgetActive(int percent){
+        mPercentBudgetActive = percent;
+    }
+
+    private void setPercentFull(int percent){
+        mPercentFull = percent;
     }
 
     private void initPaintsAndRectF(){
         mConsumedRectF = new RectF();
         mActiveRectF = new RectF();
+        mWarningRectF = new RectF();
         mConsumedPaint = createProgressPaint(Paint.ANTI_ALIAS_FLAG, mConsumedColor);
         mActivePaint = createProgressPaint(Paint.ANTI_ALIAS_FLAG, mActiveColor);
+        mWarningPaint = createProgressPaint(Paint.ANTI_ALIAS_FLAG, mWarningColor);
     }
 
     private void setRectsF(){
         mConsumedRectF.set(0, 0, mConsumedWidth, mConsumedHeight);
-        mActiveRectF.set(getWidth() - mActiveWidth, 0, getWidth(), mActiveHeight);
+        mActiveRectF.set(getWidth() - mActiveWidth - mWarningWidth, 0, getWidth() - mWarningWidth, mActiveHeight);
+        mWarningRectF.set(getWidth() - mWarningWidth, 0, getWidth(), mWarningHeight);
+        log();
     }
 
     private Paint createProgressPaint(int flags, int color){
@@ -218,38 +270,61 @@ public class CaloriesConsumedProgressView extends View {
     }
 
     public int getCaloriesConsumed() {
-        return mCaloriesConsumed;
+        return mCaloriesConsumed + mCaloriesWarning;
     }
 
     public void setCaloriesConsumed(int caloriesConsumed) {
-        mCaloriesConsumed = caloriesConsumed;
+        if (caloriesConsumed > mCaloriesBudget + mCaloriesActive){
+            mCaloriesConsumed = mCaloriesBudget + mCaloriesActive;
+            mCaloriesWarning = caloriesConsumed - mCaloriesBudget - mCaloriesActive;
+            updateCaloriesFull();
+        } else {
+            mCaloriesConsumed = caloriesConsumed;
+            mCaloriesWarning = 0;
+//            mCaloriesFull = mCaloriesBudget;
+        }
+
         updatePercentConsumed();
-        updateAlphaActivePaint();
+        updatePercentWarning();
+        updatePercentActive();
+
         updateColorConsumedPaint();
+        updateAlphaActivePaint();
+
+        updateActiveWidth();
         updateConsumedWidth();
+        updateWarningWidth();
         invalidate();
         log();
     }
 
-    private void log(){
-        Log.d("myLogs", "mCaloriesConsumed = " + mCaloriesConsumed +
-                " mConsumedWidth = " + mConsumedWidth +
-                " mPercentConsumed = " + mPercentConsumed +
-                " mPercentBudget = " + mPercentBudget +
-                " mCaloriesBudget = " + mCaloriesBudget);
-    }
-
-
     private void updateAlphaActivePaint(){
-        if (mPercentBudget - mPercentActive < mPercentConsumed ) {
+        if (mCaloriesConsumed + mCaloriesWarning >= mCaloriesBudget) {
             mActivePaint.setAlpha(ALPHA_TRANSPARENT);
         } else {
             mActivePaint.setAlpha(ALPHA_OPAQUE);
         }
     }
 
+    private void log(){
+        Log.d("myLogs", "mCaloriesConsumed = " + mCaloriesConsumed +
+                " mConsumedWidth = " + mConsumedWidth +
+                " mPercentConsumed = " + mPercentConsumed +
+                " mCaloriesBudget = " + mCaloriesBudget +
+                " mBudgetWidth" + mBudgetWidth +
+                " mPercentBudget = " + mPercentBudget +
+                " mCaloriesWarning = " + mCaloriesWarning +
+                " mWarningWidth = " + mWarningWidth +
+                " mPercentWarning = " + mPercentWarning +
+                " mCaloriesActive = " + mCaloriesActive +
+                " mActiveWidth = " + mActiveWidth +
+                " mPercentActive = " + mPercentActive +
+                " mWidth = " + getWidth() +
+                " mCaloriesFull = " + mCaloriesFull);
+    }
+
     private void updateColorConsumedPaint(){
-        if (mCaloriesConsumed - mCaloriesActive > mCaloriesWarning){
+        if (mCaloriesWarning > 0){
             mConsumedPaint.setColor(mWarningColor);
         } else {
             mConsumedPaint.setColor(mConsumedColor);
@@ -272,10 +347,24 @@ public class CaloriesConsumedProgressView extends View {
 
     public void setCaloriesActive(int caloriesActive) {
         mCaloriesActive = caloriesActive;
+        updateCaloriesFull();
+
+        updatePercentActive();
+        updatePercentBudget();
+        updatePercentConsumed();
+
+        updateConsumedWidth();
+        updateBudgetWidth();
+        updateActiveWidth();
+
         updatePercentActive();
         updateAlphaActivePaint();
-        updateColorConsumedPaint();
+//        updateColorConsumedPaint();
         updateActiveWidth();
         invalidate();
+    }
+
+    public void updateCaloriesFull(){
+        mCaloriesFull = Math.max(mCaloriesActive + mCaloriesBudget, mCaloriesConsumed + mCaloriesWarning);
     }
 }
