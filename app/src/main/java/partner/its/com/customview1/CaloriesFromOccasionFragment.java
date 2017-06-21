@@ -20,7 +20,7 @@ public class CaloriesFromOccasionFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         return LayoutInflater.from(getContext())
-                .inflate(R.layout.content_caloriesfrom_view, container, false);
+                .inflate(R.layout.fragment_caloriesfrom_view, container, false);
     }
 
     @Override

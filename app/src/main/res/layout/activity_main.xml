@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:id="@+id/main_container">
 
     <fragment
-        android:name="partner.its.com.customview1.DiagramViewFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:id="@+id/fragment_calories_consumed"
+        android:name="partner.its.com.customview1.CaloriesConsumedFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+    <!--<fragment-->
+        <!--android:name="partner.its.com.customview1.DiagramViewFragment"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"/>-->
 
     <!--<partner.its.com.customview1.CaloriesFromOccasionsDiagramView-->
         <!--android:id="@+id/calories_diagram_view"-->
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content"-->
         <!--app:thicknessDiagram="100dp"/>-->
-</LinearLayout>
-
-<!--<include layout="@layout/content_caloriesfrom_view"-->
-         <!--android:layout_height="match_parent"-->
-         <!--android:layout_width="match_parent"/>-->
+</FrameLayout>

@@ -21,4 +21,16 @@
         <attr name="snacksPercent" format="float"/>
         <attr name="thicknessDiagram" format="dimension"/>
     </declare-styleable>
+
+    <declare-styleable name="CaloriesConsumedProgressView">
+        <attr name="caloriesConsumed" format="integer"/>
+        <attr name="caloriesBudget" format="integer"/>
+        <attr name="caloriesActive" format="integer"/>
+        <attr name="caloriesWarning" format="integer"/>
+        <attr name="caloriesConsumedColor" format="color"/>
+        <attr name="caloriesBudgetColor" format="color"/>
+        <attr name="caloriesActiveColor" format="color"/>
+        <attr name="caloriesWarningColor" format="color"/>
+        <attr name="thicknessProgressView" format="dimension"/>
+    </declare-styleable>
 </resources>

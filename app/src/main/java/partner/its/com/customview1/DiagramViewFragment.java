@@ -20,7 +20,7 @@ public class DiagramViewFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return LayoutInflater.from(getContext()).inflate(R.layout.content_diagram_view, container, false);
+        return LayoutInflater.from(getContext()).inflate(R.layout.fragment_diagram_view, container, false);
     }
 
     @Override
