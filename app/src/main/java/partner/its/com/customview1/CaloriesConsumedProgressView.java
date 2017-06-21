@@ -22,6 +22,7 @@ public class CaloriesConsumedProgressView extends View {
     private static final int ALPHA_OPAQUE = 255;
     private static final int PERCENT_100 = 100;
     private static final int MIN_DESIRED_HEIGHT = 50;
+
     private Paint mConsumedPaint;
     private Paint mActivePaint;
     private Paint mWarningPaint;
@@ -38,9 +39,7 @@ public class CaloriesConsumedProgressView extends View {
     private int mCaloriesWarning;
 
     private double mPercentConsumed;
-    private double mPercentBudget;
     private double mPercentActive;
-    private double mPercentBudgetActive;
     private double mPercentFull;
     private double mPercentWarning;
 
@@ -50,12 +49,11 @@ public class CaloriesConsumedProgressView extends View {
 
     private int mConsumedWidth;
     private int mConsumedHeight;
-    private int mBudgetWidth;
-    private int mBudgetHeight;
     private int mWarningWidth;
     private int mWarningHeight;
     private int mActiveWidth;
     private int mActiveHeight;
+    private int mOldCaloriesConsumed;
 
     public CaloriesConsumedProgressView(Context context) {
         super(context);
@@ -151,7 +149,6 @@ public class CaloriesConsumedProgressView extends View {
             mCaloriesConsumed = typedArray.getInteger(R.styleable.CaloriesConsumedProgressView_caloriesConsumed, 0);
             mCaloriesBudget = typedArray.getInteger(R.styleable.CaloriesConsumedProgressView_caloriesBudget, 1000);
             updateCaloriesFull();
-//            mCaloriesWarning = mCaloriesFull - mCaloriesBudget - mCaloriesActive;
             mCaloriesWarning = 0;
 
             setPercentFull(PERCENT_100);
@@ -167,16 +164,8 @@ public class CaloriesConsumedProgressView extends View {
         }
     }
 
-    private void updatePercentBudget(){
-        mPercentBudget = ((double)mCaloriesBudget / mCaloriesFull) * mPercentFull;
-    }
-
     private void updatePercentWarning(){
         mPercentWarning = ((double)mCaloriesWarning / mCaloriesFull) * mPercentFull;
-    }
-
-    private void updatePercentBudgetActive(){
-        mPercentBudgetActive = ((mCaloriesBudget + mCaloriesActive)/(double)mCaloriesFull) * mPercentFull;
     }
 
     private void updatePercentConsumed(){
@@ -197,18 +186,6 @@ public class CaloriesConsumedProgressView extends View {
 
     private void updateActiveWidth(){
         mActiveWidth = (int)((mPercentActive / mPercentFull) * getWidth());
-    }
-
-    private void updateBudgetWidth(){
-        mBudgetWidth = (int)((mPercentBudget/ mPercentFull) * getWidth());
-    }
-
-    private void setPercentBudget(int percent){
-        mPercentBudget = percent;
-    }
-
-    private void setPercentBudgetActive(int percent){
-        mPercentBudgetActive = percent;
     }
 
     private void setPercentFull(int percent){
@@ -274,14 +251,14 @@ public class CaloriesConsumedProgressView extends View {
     }
 
     public void setCaloriesConsumed(int caloriesConsumed) {
+        mOldCaloriesConsumed = caloriesConsumed;
         if (caloriesConsumed > mCaloriesBudget + mCaloriesActive){
             mCaloriesConsumed = mCaloriesBudget + mCaloriesActive;
-            mCaloriesWarning = caloriesConsumed - mCaloriesBudget - mCaloriesActive;
+            mCaloriesWarning = caloriesConsumed - (mCaloriesBudget + mCaloriesActive);
             updateCaloriesFull();
         } else {
             mCaloriesConsumed = caloriesConsumed;
             mCaloriesWarning = 0;
-//            mCaloriesFull = mCaloriesBudget;
         }
 
         updatePercentConsumed();
@@ -311,8 +288,6 @@ public class CaloriesConsumedProgressView extends View {
                 " mConsumedWidth = " + mConsumedWidth +
                 " mPercentConsumed = " + mPercentConsumed +
                 " mCaloriesBudget = " + mCaloriesBudget +
-                " mBudgetWidth" + mBudgetWidth +
-                " mPercentBudget = " + mPercentBudget +
                 " mCaloriesWarning = " + mCaloriesWarning +
                 " mWarningWidth = " + mWarningWidth +
                 " mPercentWarning = " + mPercentWarning +
@@ -347,24 +322,26 @@ public class CaloriesConsumedProgressView extends View {
 
     public void setCaloriesActive(int caloriesActive) {
         mCaloriesActive = caloriesActive;
+        if (mOldCaloriesConsumed > mCaloriesBudget + mCaloriesActive){
+            mCaloriesConsumed = mCaloriesBudget + mCaloriesActive;
+            mCaloriesWarning = mOldCaloriesConsumed - (mCaloriesBudget + mCaloriesActive);
+        }
         updateCaloriesFull();
 
-        updatePercentActive();
-        updatePercentBudget();
         updatePercentConsumed();
+        updatePercentActive();
+        updatePercentWarning();
 
         updateConsumedWidth();
-        updateBudgetWidth();
         updateActiveWidth();
+        updateWarningWidth();
 
-        updatePercentActive();
         updateAlphaActivePaint();
-//        updateColorConsumedPaint();
-        updateActiveWidth();
         invalidate();
     }
 
     public void updateCaloriesFull(){
-        mCaloriesFull = Math.max(mCaloriesActive + mCaloriesBudget, mCaloriesConsumed + mCaloriesWarning);
+        mCaloriesFull = Math.max(mCaloriesActive + mCaloriesBudget,
+                                 mCaloriesConsumed + mCaloriesWarning);
     }
 }

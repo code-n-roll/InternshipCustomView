@@ -22,7 +22,7 @@
                 android:id="@+id/calories_budget"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1,000cal + "
+                android:text="1000cal + "
                 android:textColor="@android:color/black"/>
             <TextView
                 android:id="@+id/calories_active"
